@@ -1,0 +1,30 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- 标题栏样式 -->
+    <style name="common_head">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:layout_height">@dimen/top_bar_height</item>
+    </style>
+
+
+    <style name="ImageTranslucentTheme" parent="AppTheme">
+        <!--在Android 4.4之前的版本上运行，直接跟随系统主题-->
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <!-- tablayout字体大小-->
+    <style name="TabLayoutTextStyle">
+        <item name="android:textSize">@dimen/content_text</item>
+    </style>
+
+</resources>

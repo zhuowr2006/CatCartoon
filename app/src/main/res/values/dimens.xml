@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- 顶部栏高度 -->
+    <dimen name="top_bar_height">50dp</dimen>
+    <!-- 顶部字体的大小 -->
+    <dimen name="top_textSize">17.0sp</dimen>
+
+    <!--统一字体大小-->
+    <dimen name="unified_textSize">20.0sp</dimen>
+
+
+
+    <dimen name="more_text">12sp</dimen>
+    <dimen name="content_text">14sp</dimen>
+
+
+    <!-- Navigation -->
+    <dimen name="navigation_header_height">200dp</dimen>
+    <dimen name="navigation_avatar_size">74dp</dimen>
+
+
+    <dimen name="default_grow_margin">20dp</dimen>
+    <dimen name="default_general_margin">10dp</dimen>
+    <dimen name="default_tiny_padding">5dp</dimen>
+    <dimen name="default_tiny_margin">3dp</dimen>
+
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Card -->
+    <dimen name="touch_raise">6dp</dimen>
+    <dimen name="card_margin">10dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_small_radius">2dp</dimen>
+    <dimen name="card_small_elevation">0dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_title_margin">5dp</dimen>
+    <dimen name="title_margin_small">8dp</dimen>
+    <dimen name="card_charging_width">110dp</dimen>
+
+    <!--番剧页面-->
+    <dimen name="bangumi_title_size">14sp</dimen>
+</resources>
