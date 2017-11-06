@@ -1,0 +1,55 @@
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_gravity="center"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardBackgroundColor="@android:color/white"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:paddingLeft="5dp"
+            android:src="@drawable/recom_fn"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            />
+  <!--      <TextView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:layout_toRightOf="@id/img"
+            android:layout_centerVertical="true"
+            android:textColor="@color/bangumi_text_color"
+            android:textStyle="bold"
+            android:text="动画"
+            android:textSize="16sp"
+            />-->
+
+        <TextView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="更多 >"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

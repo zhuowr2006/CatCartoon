@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import com.homa.catcartoon.base.MyApplication;
 import com.homa.catcartoon.base.TranslucentBarBaseActivity;
+import com.homa.catcartoon.ui.category.categoryFragment;
 import com.homa.catcartoon.ui.recom.recomFragment;
 import com.homa.catcartoon.utils.PreferenceUtil;
 
@@ -133,12 +134,12 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
     private void setupViewPager(ViewPager viewPager) {
         adapter = new Adapter(getSupportFragmentManager());
 
-        String[] strs = new String[]{"番剧", "推荐","直播","分区"};
+        String[] strs = new String[]{"推荐", "分类","排行","历史"};
 
         adapter.addFragment(new recomFragment(), strs[0]);
-        adapter.addFragment(new recomFragment(), strs[0]);
-        adapter.addFragment(new recomFragment(), strs[2]);
-        adapter.addFragment(new recomFragment(), strs[3]);
+        adapter.addFragment(new categoryFragment(), strs[1]);
+//        adapter.addFragment(new recomFragment(), strs[2]);
+//        adapter.addFragment(new recomFragment(), strs[3]);
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(2);//预加载当前可见fragment页面的左右两边，2个页面
