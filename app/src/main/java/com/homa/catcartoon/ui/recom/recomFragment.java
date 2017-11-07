@@ -122,7 +122,7 @@ public class recomFragment extends BaseFragment implements Vlistener ,SwipeRefre
 
     @Override
     public void onRefresh() {
-
+        p.cleran();
         p.startPostForFragment(this);
     }
 }

@@ -1,6 +1,7 @@
 package com.homa.catcartoon.ui.category;
 
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseFragment;
+import com.homa.catcartoon.ui.List.ListActivity;
 import com.homa.catcartoon.utils.ImageLoaderUtil;
 
 import java.util.Arrays;
@@ -55,17 +57,11 @@ public class categoryFragment extends BaseFragment{
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                Intent intent = new Intent();
-//                boolean isonline = false;
-//                intent.putExtra("type", position);
-//                if (isonline) {
-////                    intent.setClass(mActivity, TVActivity.class);
-//                    mActivity.startActivity(intent);
-//                } else {
-//                    intent.setClass(mActivity, MainItemActivity.class);
-//                    mActivity.startActivity(intent);
-//                }
-            }
+                Intent intent = new Intent();
+                intent.putExtra("type", position);
+                    intent.setClass(mActivity, ListActivity.class);
+                    mActivity.startActivity(intent);
+                }
         });
     }
 

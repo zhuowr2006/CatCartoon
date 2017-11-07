@@ -1,5 +1,6 @@
 package com.homa.catcartoon;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,8 +21,12 @@ import android.widget.ImageView;
 import com.homa.catcartoon.base.MyApplication;
 import com.homa.catcartoon.base.TranslucentBarBaseActivity;
 import com.homa.catcartoon.ui.category.categoryFragment;
+import com.homa.catcartoon.ui.ranking.RankingFragment;
 import com.homa.catcartoon.ui.recom.recomFragment;
+import com.homa.catcartoon.ui.search.SearchActivity;
 import com.homa.catcartoon.utils.PreferenceUtil;
+import com.wyt.searchbox.SearchFragment;
+import com.wyt.searchbox.custom.IOnSearchClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +37,7 @@ import skin.support.SkinCompatManager;
 import static com.homa.catcartoon.R.id.main_ap_layout;
 
 
-public class MainActivity extends TranslucentBarBaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends TranslucentBarBaseActivity implements NavigationView.OnNavigationItemSelectedListener,IOnSearchClickListener {
     //顶部布局
     @BindView(R.id.huancunx)
     ImageView huancunx;
@@ -52,6 +57,7 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
     DrawerLayout mainLayout;
 
     private Adapter adapter;
+    private SearchFragment searchFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,11 +67,18 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
      * 初始化NavigationView
      */
     private void initNavigationView() {
+        searchFragment = SearchFragment.newInstance();
+        searchFragment.setOnSearchClickListener(this);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         navigationView.setItemTextColor(null);//取消掉默认的选择图标和字体颜色
         navigationView.setItemIconTintList(null);
-
+        soushuo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchFragment.show(getSupportFragmentManager(), SearchFragment.TAG);
+            }
+        });
 //        ImageLoaderUtil.loaderCircle(this, R.drawable.userlogo ,logo);
 //        userlogo
 
@@ -138,7 +151,7 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
 
         adapter.addFragment(new recomFragment(), strs[0]);
         adapter.addFragment(new categoryFragment(), strs[1]);
-//        adapter.addFragment(new recomFragment(), strs[2]);
+        adapter.addFragment(new RankingFragment(), strs[2]);
 //        adapter.addFragment(new recomFragment(), strs[3]);
 
         viewPager.setAdapter(adapter);
@@ -160,6 +173,14 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
+    }
+
+    @Override
+    public void OnSearchClick(String keyword) {
+        //搜索
+        Intent intent=new Intent(this, SearchActivity.class);
+        intent.putExtra("content",keyword);
+        startActivity(intent);
     }
 
 
