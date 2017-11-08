@@ -59,6 +59,7 @@ public class categoryFragment extends BaseFragment{
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent();
                 intent.putExtra("type", position);
+                intent.putExtra("title", mVals[position]);
                     intent.setClass(mActivity, ListActivity.class);
                     mActivity.startActivity(intent);
                 }

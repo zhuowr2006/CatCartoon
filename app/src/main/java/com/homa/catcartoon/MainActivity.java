@@ -141,7 +141,7 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
         }
         tabLayout.setTabMode(TabLayout.MODE_FIXED);//平均分配tabitem
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(2);
+        viewPager.setCurrentItem(0);
     }
 
     private void setupViewPager(ViewPager viewPager) {

@@ -50,4 +50,5 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.2'
     /**搜索控件*/
     compile 'com.wenwenwen888:searchbox:1.0.0'
+    compile('com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE')
 }

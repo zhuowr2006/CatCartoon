@@ -1,5 +1,6 @@
 package com.homa.catcartoon.ui.List;
 
+import android.content.Intent;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,8 +16,11 @@ import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseActivity;
 import com.homa.catcartoon.net.HttpApiManager;
 import com.homa.catcartoon.ui.List.bean.ListBean;
+import com.homa.catcartoon.ui.info.InfoActivity;
 import com.homa.catcartoon.utils.ImageLoaderUtil;
+import com.homa.catcartoon.utils.UrlUtils;
 import com.litesuits.android.log.Log;
+import com.litesuits.common.assist.Check;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 
@@ -46,6 +50,7 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private int pagenum = 1;
     private int type = 0;
     private HttpManager httpManager;
+    private String nextPageUrl;//下一页的url
 
     @Override
     public int getLayoutResId() {
@@ -70,35 +75,40 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                Intent intent = new Intent();
-//                boolean isonline = false;
-//                intent.putExtra("type", position);
-//                if (isonline) {
-////                    intent.setClass(mActivity, TVActivity.class);
-//                    mActivity.startActivity(intent);
-//                } else {
-//                    intent.setClass(mActivity, MainItemActivity.class);
-//                    mActivity.startActivity(intent);
-//                }
+               ListBean bean=list.get(position);
+//                    System.out.println("=="+UrlUtils.getComicUrl(bean.getUrl()));
+                Intent i = new Intent(ListActivity.this, InfoActivity.class);
+                i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                startActivity(i);
             }
         });
         type = getIntent().getIntExtra("type", 0);
+        String title=getIntent().getStringExtra("title");
+        setToptext(title);
+
         httpManager = new HttpManager(this, this);
         HttpApiManager.getCategory(httpManager, type, pagenum);
+        swipeLayout.setRefreshing(true);
     }
 
     @Override
-    public void onNext(String resulte, String method) {
+    public void onNext(final String resulte, String method) {
         if (pagenum == 1) {//刷新
             swipeLayout.setRefreshing(false);
             getData(resulte, list);
             adapter.setNewData(list);
         } else {//加载更多
             //成功获取更多数据
-            List<ListBean> add = new ArrayList<>();
-            getData(resulte, add);
-            adapter.addData(add);
-            adapter.loadMoreComplete();
+            fanjuRcview.postDelayed(new Runnable() {//必须要延时，不然addData()之后立刻调用loadMoreComplete会触发加载更多，从而无线循环去请求加载更多数据
+                @Override
+                public void run() {
+                    List<ListBean> add = new ArrayList<>();
+                    getData(resulte, add);
+                    adapter.addData(add);
+                    adapter.loadMoreComplete();
+                }
+            }, 1000);
+
         }
     }
 
@@ -119,7 +129,10 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         try {
             //从一个URL加载一个Document对象。
             Document doc = Jsoup.parse(resulte);
-
+            String url = doc.select("div.page").select("a.next").attr("href");
+            if (!Check.isEmpty(url)){//没有下一页了
+                nextPageUrl=url;
+            }
             for (Element e : doc.select("div.container").select("div.list").select("div.item")) {
 //                Log.i("排行数据",e.select("span").text()+e.select("a").attr("href")+e.select("a").attr("title"));
                 ListBean listBean = new ListBean();
@@ -132,6 +145,7 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 data.add(listBean);
 //                System.out.println("=="+e.select("div.img").select("a").text());
             }
+
         } catch (Exception e) {
             Log.i("mytag", e.toString());
         }
@@ -142,6 +156,10 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public void onLoadMoreRequested() {
         pagenum++;
+        if (Check.isEmpty(nextPageUrl)) {//没有下一页了
+            adapter.loadMoreEnd();
+            return;
+        }
         HttpApiManager.getCategory(httpManager, type, pagenum);
     }
 

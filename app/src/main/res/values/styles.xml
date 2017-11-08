@@ -10,8 +10,7 @@
 
     <!-- 标题栏样式 -->
     <style name="common_head">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:layout_height">@dimen/top_bar_height</item>
+        <item name="android:layout_marginTop">@dimen/top_bar_marginTop</item>
     </style>
 
 

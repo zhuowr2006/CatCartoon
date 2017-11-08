@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/info_toplayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/app_color"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/info_img"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
+
+        <TextView
+            android:id="@+id/info_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/info_img"
+            android:textSize="@dimen/content_text" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/info_title"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/info_img"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/zuoze_img"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/zuoze" />
+
+            <TextView
+                android:id="@+id/info_zuoze"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/zuoze_img"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/jianjie_img"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_below="@+id/info_zuoze"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/jianjie" />
+
+            <TextView
+                android:id="@+id/info_jianjie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/jianjie_img"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/jianjie_img"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:text=""
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/info_toplayout"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/info_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="状态：连载中" />
+
+        <TextView
+            android:id="@+id/info_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="更新时间：2017-10-54" />
+    </RelativeLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/info_layout"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="50dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/info_jishu_rcview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/look" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text=" 看过这部漫画的人还看过..." />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/info_tuijian_rcview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:id="@+id/load_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <!-- <ProgressBar
+             android:id="@+id/progressBar"
+             style="@android:style/Widget.Holo.HorizontalScrollView"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_centerHorizontal="true"
+             android:layout_centerVertical="true"
+             android:max="100"
+             android:progress="20" />-->
+
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:mlpb_enable_circle_background="true"
+            app:mlpb_progress_color="@color/app_color"
+            app:mlpb_progress_stoke_width="5dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+</RelativeLayout>
+

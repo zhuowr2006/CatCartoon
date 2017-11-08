@@ -27,7 +27,7 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
-                android:paddingTop="25dp"
+                android:paddingTop="@dimen/top_bar_marginTop"
                 >
 
                 <RelativeLayout
@@ -75,6 +75,7 @@
                 app:tabIndicatorHeight="3dp"
                 app:tabMode="scrollable"
                 app:tabPaddingEnd="10dp"
+                android:layout_marginTop="5dp"
                 app:tabSelectedTextColor="@android:color/white"
                 app:tabTextAppearance="@style/TabLayoutTextStyle"
                 app:tabTextColor="@color/tat_tag_color" />

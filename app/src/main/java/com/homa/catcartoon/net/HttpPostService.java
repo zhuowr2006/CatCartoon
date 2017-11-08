@@ -18,12 +18,19 @@ public interface HttpPostService {
     @GET(".")
     Observable<String> getRecommend();
     /**
-     * 首页推荐
+     * 搜索
      *
      * @return
      */
     @GET("search/index/nickname/{url}")
     Observable<String> getSearch(@Path("url") String url);
+    /**
+     * 漫画详情
+     *
+     * @return
+     */
+    @GET("comic{num}")
+    Observable<String> getInfo(@Path("num") String num);
 
     /**
      * 连载

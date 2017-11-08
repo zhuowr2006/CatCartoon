@@ -31,6 +31,9 @@
         <activity android:name=".ui.search.SearchActivity"
             android:theme="@style/ImageTranslucentTheme">
         </activity>
+        <activity android:name=".ui.info.InfoActivity"
+            android:theme="@style/ImageTranslucentTheme">
+        </activity>
     </application>
 
 </manifest>

@@ -56,6 +56,7 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
 
     @Override
     public void onInit() {
+        setToptext("搜索");
         list = new ArrayList<>();
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(getResources().getColor(R.color.app_color));

@@ -33,6 +33,16 @@ public  class HttpApiManager {
         api.setObservable(httpService.getSearch(url));
         manager.doHttpDeal(api);
     }
+    /**
+     * 详情*/
+    public static void getInfo(HttpManager manager,String url) {
+        BaseApi api = new BaseApi();
+        api.setBaseUrl(BaseUrl);
+        api.setMethod("getInfo");//用来识别返回时是哪个数据
+        HttpPostService httpService = manager.getReTrofit(api).create(HttpPostService.class);
+        api.setObservable(httpService.getInfo(url));
+        manager.doHttpDeal(api);
+    }
 
     /**
      * 分类*/

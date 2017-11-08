@@ -1,6 +1,7 @@
 package com.homa.catcartoon.ui.recom;
 
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +12,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseFragment;
 import com.homa.catcartoon.ui.base.Vlistener;
+import com.homa.catcartoon.ui.info.InfoActivity;
 import com.homa.catcartoon.ui.recom.adapter.SectionAdapter;
+import com.homa.catcartoon.ui.recom.bean.RecomBean;
 import com.homa.catcartoon.utils.BannerGlideImageLoader;
+import com.homa.catcartoon.utils.UrlUtils;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -67,16 +71,13 @@ public class recomFragment extends BaseFragment implements Vlistener ,SwipeRefre
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                if (!recomP.getData().get(position).isHeader) {
-//                    VideoItemBean bean = recomP.getData().get(position).t;
-//                    System.out.println(bean.getPic() + "=============");
-//                    Intent i = new Intent();
-//                    Bundle bundle = new Bundle();
-//                    bundle.putSerializable("videoItemdata", bean);
-//                    i.setClass(getActivity(), VideoInfoActivity.class);
-//                    i.putExtras(bundle);
-//                    startActivity(i);
-//                }
+                if (!p.getData().get(position).isHeader) {
+                    RecomBean bean=p.getData().get(position).t;
+//                    System.out.println("=="+UrlUtils.getComicUrl(bean.getUrl()));
+                    Intent i = new Intent(getActivity(), InfoActivity.class);
+                    i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                    startActivity(i);
+                }
             }
         });
         fanjuRcview.setAdapter(adapter);

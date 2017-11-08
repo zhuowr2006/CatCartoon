@@ -3,7 +3,7 @@
     <!-- 顶部栏高度 -->
     <dimen name="top_bar_height">50dp</dimen>
     <!-- 顶部栏偏移高度 -->
-    <dimen name="top_bar_marginTop">0dp</dimen>
+    <dimen name="top_bar_marginTop">25dp</dimen>
     <!-- 顶部字体的大小 -->
     <dimen name="top_textSize">18.0sp</dimen>
 

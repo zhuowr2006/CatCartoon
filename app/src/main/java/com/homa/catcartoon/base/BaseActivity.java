@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements HttpOn
     /**
      *基础界面控件 */
     private TextView toptext;
+    private Button back;
     private LinearLayout contextLayout;
 
     protected  boolean isExtendToBaseLayout=true;//是否继承界面
@@ -70,7 +72,21 @@ public abstract class BaseActivity extends RxAppCompatActivity implements HttpOn
     private void initView() {
         contextLayout = (LinearLayout) findViewById(R.id.context_layout);
         toptext = (TextView) findViewById(R.id.top_bar_titleTv);
+        back = (Button) findViewById(R.id.back_btn);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setBacktoDo();
+            }
+        });
     }
+    public void setBacktoDo(){
+        finish();
+    }
+    public void setToptext(String title){
+        toptext.setText(title);
+    }
+
 
     /**界面操作*/
     @Override
