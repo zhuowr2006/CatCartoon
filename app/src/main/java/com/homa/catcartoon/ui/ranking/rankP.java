@@ -65,7 +65,7 @@ public class rankP extends PxListener implements PMlistener {
 //                System.out.println("=="+e.select("span").text());
 //                System.out.println("=="+e.select("a").attr("href"));
 //                System.out.println("=="+e.select("a").attr("title"));
-                Log.i("排行数据",e.select("span").text()+e.select("a").attr("href")+e.select("a").attr("title"));
+//                Log.i("排行数据",e.select("span").text()+e.select("a").attr("href")+e.select("a").attr("title"));
                 if (num!=100){
                     data.add(new RankingBean(e.select("span").text(),e.select("a").attr("title"),e.select("a").attr("href")));
                 }

@@ -66,7 +66,7 @@ public class recomP extends PxListener implements PMlistener {
             Document doc = Jsoup.parse(html);
             //广告数据
             for (Element e:doc.select("div.bannerForm").select("ul").select("li")){
-                Log.i("广告数据",e.select("a").select("img").attr("src")+e.select("a").select("img").attr("title"));
+//                Log.i("广告数据",e.select("a").select("img").attr("src")+e.select("a").select("img").attr("title"));
                 url.add(e.select("a").select("img").attr("src"));
             }
             //热门推荐
@@ -87,7 +87,7 @@ public class recomP extends PxListener implements PMlistener {
                     }
                 }
                 num++;
-                Log.i("热门推荐",e.select("a").attr("href")+"=="+e.select("img").attr("src")+"=="+e.select("img").attr("title")+"=="+e.select("span").text());
+//                Log.i("热门推荐",e.select("a").attr("href")+"=="+e.select("img").attr("src")+"=="+e.select("img").attr("title")+"=="+e.select("span").text());
             }
 //            //最新上架
             num=0;
@@ -99,7 +99,7 @@ public class recomP extends PxListener implements PMlistener {
                     }
 
                 num++;
-                Log.i("最新上架",e.select("a").attr("href")+"=="+e.select("img").attr("src")+"=="+e.select("img").attr("title")+"=="+e.select("span").text());
+//                Log.i("最新上架",e.select("a").attr("href")+"=="+e.select("img").attr("src")+"=="+e.select("img").attr("title")+"=="+e.select("span").text());
             }
         }catch(Exception e) {
             Log.i("mytag", e.toString());

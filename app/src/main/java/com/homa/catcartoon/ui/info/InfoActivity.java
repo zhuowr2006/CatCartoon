@@ -1,7 +1,6 @@
 package com.homa.catcartoon.ui.info;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
@@ -18,9 +17,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseActivity;
+import com.homa.catcartoon.data.ManHua;
+import com.homa.catcartoon.data.ManHuaDaoUtils;
 import com.homa.catcartoon.net.HttpApiManager;
 import com.homa.catcartoon.ui.info.bean.ChapterBean;
 import com.homa.catcartoon.ui.info.bean.OtherBean;
+import com.homa.catcartoon.ui.read.ReadActivity;
 import com.homa.catcartoon.utils.ImageLoaderUtil;
 import com.homa.catcartoon.utils.UrlUtils;
 import com.litesuits.android.log.Log;
@@ -35,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Homa on 2017/11/7.
@@ -69,8 +70,11 @@ public class InfoActivity extends BaseActivity {
     private List<OtherBean> otherMoreList;
 
     private String url;
+    private String title;
 
     private HttpManager httpManager;
+
+    private ManHua manhua;//从数据库拿到的数据
 
     @Override
     public int getLayoutResId() {
@@ -93,17 +97,29 @@ public class InfoActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapterx, View view, int position) {
+                Intent i = new Intent(InfoActivity.this, ReadActivity.class);
                 adapter.setDefSelect(position);
-//                Intent intent = new Intent();
-//                boolean isonline = false;
-//                intent.putExtra("type", position);
-//                if (isonline) {
-////                    intent.setClass(mActivity, TVActivity.class);
-//                    mActivity.startActivity(intent);
-//                } else {
-//                    intent.setClass(mActivity, MainItemActivity.class);
-//                    mActivity.startActivity(intent);
-//                }
+                ChapterBean bean = chapterList.get(position);
+                //如果数据库里面查出来为空，代表没看过，直接创建新的数据
+                if (manhua==null){
+                    ManHua m=new ManHua();
+                    m.setTitle(title);
+                    m.setAuthor(infoZuoze.getText().toString());
+                    m.setNewstr(chapterList.get(0).getName());
+                    m.setNowstr(chapterList.get(position).getName());
+                    ManHuaDaoUtils.insertManhua(m);
+                    i.putExtra("data",m);
+                    i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                    i.putExtra("url",chapterList.get(position).getName());
+                    System.out.println("---到这里"+chapterList.get(position).getName());
+                }else {//如果有，那就更新下选中的目录manhua.setNowstr(chapterList.get(position).getName());
+                   ManHuaDaoUtils.updateManhua(manhua);
+                    i.putExtra("data",manhua);
+                    i.putExtra("url", manhua.getUrl());
+                    i.putExtra("url",chapterList.get(position).getName());
+                    System.out.println("---更新");
+                }
+                startActivity(i);
             }
         });
 
@@ -127,12 +143,33 @@ public class InfoActivity extends BaseActivity {
 
 
         url = getIntent().getStringExtra("url");
-//        String title = getIntent().getStringExtra("title");
         setToptext("详情");
-
+        title = getIntent().getStringExtra("title");
         httpManager = new HttpManager(this, this);
         HttpApiManager.getInfo(httpManager, url);
     }
+    private void setdata(String title){
+        ManHua data=ManHuaDaoUtils.queryManhua(title);
+        if (data!=null){
+            manhua=data;
+            if (adapter.getData().size()>0){
+                if (adapter.getDefSelect().equals(manhua.getNowstr())){//如果现在选中的和查询到的数据库的一样，那就不管了
+                    return;
+                }
+                for (int i = 0; i < chapterList.size(); i++) {
+                    if (chapterList.get(i).getName().equals(manhua.getNowstr())){
+                        adapter.setDefSelect(i);
+                        return;
+                    }
+                }
+
+            }
+        }else {
+//            System.out.println("ccccccccccc");
+        }
+
+    }
+
 
     @Override
     public void onNext(final String resulte, String method) {
@@ -143,8 +180,31 @@ public class InfoActivity extends BaseActivity {
                 adapter.setNewData(chapterList);
                 bottomadapter.setNewData(otherMoreList);
                 loadLayout.setVisibility(View.GONE);
+                setdata(title);
             }
         }, 1000);
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onStart();
+        setdata(title);//每次回来的时候，更新下目录选择的位置
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (manhua!=null){//关闭的时候如果有目录有更新，那就更新下数据库
+            if (chapterList.size()>0){
+                if (!manhua.getNewstr().equals(chapterList.get(0).getName())){
+                    manhua.setNewstr(chapterList.get(0).getName());
+                    ManHuaDaoUtils.updateManhua(manhua);
+                }
+            }
+
+        }
+
+        super.onDestroy();
     }
 
     @Override
@@ -156,7 +216,7 @@ public class InfoActivity extends BaseActivity {
         try {
             //从一个URL加载一个Document对象。
             Document doc = Jsoup.parse(resulte);
-//            System.out.println("ttttt"+doc.select("div.comicInfo").select("div.img").select("img").attr("src"));
+            System.out.println("ttttt"+doc.select("div.topToolBar").select("a.left"));
             ImageLoaderUtil.loader(this, doc.select("div.comicInfo").select("div.img").select("img").attr("src"), infoImg);
 
 //            System.out.println("ttttt"+doc.select("div.comicInfo").select("div.img").select("img").attr("title"));
@@ -201,13 +261,6 @@ public class InfoActivity extends BaseActivity {
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
-
     public class SubareaAdapter extends BaseQuickAdapter<ChapterBean, BaseViewHolder> {
         private int defItem = -1;
 
@@ -219,6 +272,13 @@ public class InfoActivity extends BaseActivity {
         public void setDefSelect(int position) {
             this.defItem = position;
             notifyDataSetChanged();
+        }
+        public String getDefSelect() {
+            String name = null;
+            if (defItem>=0){
+                name= getItem(defItem).getName();
+            }
+           return name;
         }
 
 

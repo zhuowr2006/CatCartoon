@@ -30,7 +30,7 @@ public interface HttpPostService {
      * @return
      */
     @GET("comic{num}")
-    Observable<String> getInfo(@Path("num") String num);
+    Observable<String> getInfo(@Path(value = "num",encoded = false) String num);
 
     /**
      * 连载

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin:'org.greenrobot.greendao'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -16,6 +16,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    //数据库配置
+    greendao{
+        schemaVersion 1
+        //显式创建，指定路径，可以看到类
+        //隐式创建，不指定路径，不可以看到类
+        daoPackage 'com.homa.catcartoon.data.greendao'
+        targetGenDir 'src/main/java'
     }
 }
 
@@ -50,5 +58,14 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.2'
     /**搜索控件*/
     compile 'com.wenwenwen888:searchbox:1.0.0'
+    //加载框
     compile('com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE')
+
+    compile 'com.github.CarGuo:FrescoUtils:v1.0.8'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    //数据库
+    compile'org.greenrobot:greendao:3.1.0'
+    compile'org.greenrobot:greendao-generator:3.1.0'
+    //用来升级greendao数据库的辅助类
+    compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.4.0'
 }

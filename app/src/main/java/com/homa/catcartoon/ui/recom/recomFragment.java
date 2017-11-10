@@ -76,6 +76,7 @@ public class recomFragment extends BaseFragment implements Vlistener ,SwipeRefre
 //                    System.out.println("=="+UrlUtils.getComicUrl(bean.getUrl()));
                     Intent i = new Intent(getActivity(), InfoActivity.class);
                     i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                    i.putExtra("title", bean.getTitle());
                     startActivity(i);
                 }
             }

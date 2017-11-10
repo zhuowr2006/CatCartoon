@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/read_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/read_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/back_icon" />
+
+        <TextView
+            android:id="@+id/read_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/read_back"
+            android:text="第计算机话" />
+    </RelativeLayout>
+
+    <!--<com.github.chrisbanes.photoview.PhotoView-->
+    <!--android:id="@+id/photo_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_above="@+id/read_bottom_layout"-->
+    <!--android:layout_below="@+id/read_top_layout" />-->
+
+    <me.relex.photodraweeview.PhotoDraweeView
+        android:id="@+id/photo_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        fresco:actualImageScaleType="fitCenter"
+        fresco:failureImage="@mipmap/ic_launcher"
+        fresco:placeholderImage="@mipmap/ic_launcher"
+        fresco:placeholderImageScaleType="fitCenter"
+        android:layout_above="@+id/read_bottom_layout"
+        android:layout_below="@+id/read_top_layout" />
+
+    <RelativeLayout
+        android:id="@+id/load_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/read_bottom_layout"
+        android:layout_below="@+id/read_top_layout"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            app:mlpb_enable_circle_background="true"
+            app:mlpb_progress_color="@color/app_color"
+            app:mlpb_progress_stoke_width="5dp" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/read_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/up_chapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/base_btn_selector"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:text="上一章"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/up_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/up_chapter"
+            android:background="@drawable/base_btn_selector"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:text="上一页"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/next_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/next_chapter"
+            android:background="@drawable/base_btn_selector"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:text="下一页"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/next_chapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/base_btn_selector"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:text="下一章"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+</RelativeLayout>
+
