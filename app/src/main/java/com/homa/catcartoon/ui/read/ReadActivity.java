@@ -1,6 +1,8 @@
 package com.homa.catcartoon.ui.read;
 
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -10,7 +12,6 @@ import android.widget.Toast;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseActivity;
 import com.homa.catcartoon.data.ManHua;
-import com.homa.catcartoon.data.ManHuaDaoUtils;
 import com.homa.catcartoon.net.HttpApiManager;
 import com.homa.catcartoon.utils.UrlUtils;
 import com.litesuits.android.log.Log;
@@ -71,10 +72,14 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
         return R.layout.activity_read;
     }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        isExtendToBaseLayout=false;
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public void onInit() {
-
 
         readBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +96,7 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
         keepTitle= getIntent().getStringExtra("title");
         manHua=(ManHua)getIntent().getSerializableExtra("data");
         httpManager = new HttpManager(this, this);
-        HttpApiManager.getInfo(httpManager,nowUrl);
+        HttpApiManager.getInfo(httpManager,"/21847/191/");
 //        loadLayout.setVisibility(View.VISIBLE);
 
 //        ImageLoaderUtil.loader(this,"http://tkpic.tukumanhua.com/tukuccimg/dmimg/19887/552046/1_19887.jpg",photoView);
@@ -257,12 +262,4 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        manHua.setUrl(nowUrl);
-        manHua.setNowstr(keepTitle);
-        System.out.println("名字=="+keepTitle);
-        ManHuaDaoUtils.updateManhua(manHua);
-        super.onDestroy();
-    }
 }
