@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import com.homa.catcartoon.base.MyApplication;
 import com.homa.catcartoon.base.TranslucentBarBaseActivity;
+import com.homa.catcartoon.ui.History.HistoryFragment;
 import com.homa.catcartoon.ui.category.categoryFragment;
 import com.homa.catcartoon.ui.ranking.RankingFragment;
 import com.homa.catcartoon.ui.recom.recomFragment;
@@ -152,7 +153,7 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
         adapter.addFragment(new recomFragment(), strs[0]);
         adapter.addFragment(new categoryFragment(), strs[1]);
         adapter.addFragment(new RankingFragment(), strs[2]);
-//        adapter.addFragment(new recomFragment(), strs[3]);
+        adapter.addFragment(new HistoryFragment(), strs[3]);
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(2);//预加载当前可见fragment页面的左右两边，2个页面

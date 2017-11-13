@@ -1,5 +1,6 @@
 package com.homa.catcartoon.ui.search;
 
+import android.content.Intent;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,7 +17,9 @@ import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseActivity;
 import com.homa.catcartoon.net.HttpApiManager;
 import com.homa.catcartoon.ui.List.bean.ListBean;
+import com.homa.catcartoon.ui.info.InfoActivity;
 import com.homa.catcartoon.utils.ImageLoaderUtil;
+import com.homa.catcartoon.utils.UrlUtils;
 import com.litesuits.android.log.Log;
 import com.litesuits.common.assist.Check;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
@@ -74,16 +77,11 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                Intent intent = new Intent();
-//                boolean isonline = false;
-//                intent.putExtra("type", position);
-//                if (isonline) {
-////                    intent.setClass(mActivity, TVActivity.class);
-//                    mActivity.startActivity(intent);
-//                } else {
-//                    intent.setClass(mActivity, MainItemActivity.class);
-//                    mActivity.startActivity(intent);
-//                }
+                ListBean bean=list.get(position);
+                Intent i = new Intent(SearchActivity.this, InfoActivity.class);
+                i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                i.putExtra("title", bean.getTitle());
+                startActivity(i);
             }
         });
         content = getIntent().getStringExtra("content");

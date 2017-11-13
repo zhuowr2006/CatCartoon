@@ -12,13 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#80000000"
+        android:background="#d9000000"
         android:padding="10dp">
 
         <ImageView
             android:id="@+id/read_back"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:background="@drawable/back_icon" />
 
         <TextView
@@ -28,6 +28,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/read_back"
+            android:textColor="@android:color/white"
             android:text="第计算机话" />
     </RelativeLayout>
 
@@ -76,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#80000000"
+        android:background="#d9000000"
         android:padding="10dp">
 
         <TextView

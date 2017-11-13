@@ -15,20 +15,27 @@ public class ManHua implements Serializable{
     //不能用int
     @Id(autoincrement = true)
     private Long id;
-    private String title;//名字
-    private String author;//作者
-    private String newstr;//最新更新
-    private String nowstr;//现在看到第几话
-    private String url;//具体图片地址
-    @Generated(hash = 1497561074)
-    public ManHua(Long id, String title, String author, String newstr,
-            String nowstr, String url) {
+    private String title;
+    private String imgurl;
+    private String author;
+    private String infourl;//信息url
+    private String seewhere;//看到哪
+    private String seewhereurl;//看到哪集的具体url
+    private String updatahere;//更新到哪集
+    private long modifytime;//修改的时间
+    @Generated(hash = 1747970072)
+    public ManHua(Long id, String title, String imgurl, String author,
+            String infourl, String seewhere, String seewhereurl, String updatahere,
+            long modifytime) {
         this.id = id;
         this.title = title;
+        this.imgurl = imgurl;
         this.author = author;
-        this.newstr = newstr;
-        this.nowstr = nowstr;
-        this.url = url;
+        this.infourl = infourl;
+        this.seewhere = seewhere;
+        this.seewhereurl = seewhereurl;
+        this.updatahere = updatahere;
+        this.modifytime = modifytime;
     }
     @Generated(hash = 1308148084)
     public ManHua() {
@@ -45,30 +52,61 @@ public class ManHua implements Serializable{
     public void setTitle(String title) {
         this.title = title;
     }
+    public String getImgurl() {
+        return this.imgurl;
+    }
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
     public String getAuthor() {
         return this.author;
     }
     public void setAuthor(String author) {
         this.author = author;
     }
-    public String getNewstr() {
-        return this.newstr;
+    public String getInfourl() {
+        return this.infourl;
     }
-    public void setNewstr(String newstr) {
-        this.newstr = newstr;
+    public void setInfourl(String infourl) {
+        this.infourl = infourl;
     }
-    public String getNowstr() {
-        return this.nowstr;
+    public String getSeewhere() {
+        return this.seewhere;
     }
-    public void setNowstr(String nowstr) {
-        this.nowstr = nowstr;
+    public void setSeewhere(String seewhere) {
+        this.seewhere = seewhere;
     }
-    public String getUrl() {
-        return this.url;
+    public String getSeewhereurl() {
+        return this.seewhereurl;
     }
-    public void setUrl(String url) {
-        this.url = url;
+    public void setSeewhereurl(String seewhereurl) {
+        this.seewhereurl = seewhereurl;
+    }
+    public String getUpdatahere() {
+        return this.updatahere;
+    }
+    public void setUpdatahere(String updatahere) {
+        this.updatahere = updatahere;
+    }
+    public long getModifytime() {
+        return this.modifytime;
+    }
+    public void setModifytime(long modifytime) {
+        this.modifytime = modifytime;
     }
 
-
+    @Override
+    public String toString() {
+        return "ManHua{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", imgurl='" + imgurl + '\'' +
+                ", author='" + author + '\'' +
+                ", infourl='" + infourl + '\'' +
+                ", seewhere='" + seewhere + '\'' +
+                ", seewhereurl='" + seewhereurl + '\'' +
+                ", updatahere='" + updatahere + '\'' +
+                ", modifytime=" + modifytime +
+                '}';
+    }
 }

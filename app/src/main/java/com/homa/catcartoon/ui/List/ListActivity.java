@@ -79,6 +79,7 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 //                    System.out.println("=="+UrlUtils.getComicUrl(bean.getUrl()));
                 Intent i = new Intent(ListActivity.this, InfoActivity.class);
                 i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                i.putExtra("title", bean.getTitle());
                 startActivity(i);
             }
         });

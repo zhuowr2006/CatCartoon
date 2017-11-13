@@ -1,6 +1,7 @@
 package com.homa.catcartoon.ui.ranking;
 
 
+import android.content.Intent;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +15,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseFragment;
 import com.homa.catcartoon.ui.base.Vlistener;
+import com.homa.catcartoon.ui.info.InfoActivity;
 import com.homa.catcartoon.ui.ranking.bean.RankingBean;
+import com.homa.catcartoon.utils.UrlUtils;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 
 import java.util.ArrayList;
@@ -64,16 +67,12 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                Intent intent = new Intent();
-//                boolean isonline = false;
-//                intent.putExtra("type", position);
-//                if (isonline) {
-////                    intent.setClass(mActivity, TVActivity.class);
-//                    mActivity.startActivity(intent);
-//                } else {
-//                    intent.setClass(mActivity, MainItemActivity.class);
-//                    mActivity.startActivity(intent);
-//                }
+                RankingBean bean=list.get(position);
+//                    System.out.println("=="+UrlUtils.getComicUrl(bean.getUrl()));
+                Intent i = new Intent(getActivity(), InfoActivity.class);
+                i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
+                i.putExtra("title", bean.getTitle());
+                startActivity(i);
             }
         });
         p.startPostForFragment(this);

@@ -51,7 +51,8 @@
                         android:layout_marginRight="20dp"
                         android:layout_toLeftOf="@+id/soushuo"
                         android:clickable="true"
-                        android:src="@drawable/xiazai" />
+                        android:src="@drawable/xiazai"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/soushuo"

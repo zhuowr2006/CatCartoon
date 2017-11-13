@@ -42,7 +42,7 @@ import butterknife.BindView;
  * Created by Homa on 2017/11/7.
  */
 
-public class InfoActivity extends BaseActivity {
+public class InfoActivity extends BaseActivity implements ReadActivity.SeeListener{
 
 
     @BindView(R.id.info_img)
@@ -71,6 +71,7 @@ public class InfoActivity extends BaseActivity {
 
     private String url;
     private String title;
+    private String img;
 
     private HttpManager httpManager;
 
@@ -83,10 +84,8 @@ public class InfoActivity extends BaseActivity {
 
     @Override
     public void onInit() {
-
         chapterList = new ArrayList<>();
         otherMoreList = new ArrayList<>();
-
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         infoJishuRcview.setLayoutManager(layoutManager);
@@ -97,29 +96,26 @@ public class InfoActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapterx, View view, int position) {
-                Intent i = new Intent(InfoActivity.this, ReadActivity.class);
-                adapter.setDefSelect(position);
+                System.out.println("tttttttttt");
                 ChapterBean bean = chapterList.get(position);
+                adapter.setDefSelectNotify(bean.getName());
                 //如果数据库里面查出来为空，代表没看过，直接创建新的数据
                 if (manhua==null){
-                    ManHua m=new ManHua();
-                    m.setTitle(title);
-                    m.setAuthor(infoZuoze.getText().toString());
-                    m.setNewstr(chapterList.get(0).getName());
-                    m.setNowstr(chapterList.get(position).getName());
-                    ManHuaDaoUtils.insertManhua(m);
-                    i.putExtra("data",m);
-                    i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
-                    i.putExtra("url",chapterList.get(position).getName());
-                    System.out.println("---到这里"+chapterList.get(position).getName());
-                }else {//如果有，那就更新下选中的目录manhua.setNowstr(chapterList.get(position).getName());
-                   ManHuaDaoUtils.updateManhua(manhua);
-                    i.putExtra("data",manhua);
-                    i.putExtra("url", manhua.getUrl());
-                    i.putExtra("url",chapterList.get(position).getName());
-                    System.out.println("---更新");
+                    manhua=new ManHua();
+                    manhua.setImgurl(img);
+                    manhua.setTitle(title);
+                    manhua.setAuthor(infoZuoze.getText().toString());
+                    manhua.setInfourl(url);
+                    manhua.setUpdatahere(UrlUtils.getName(chapterList.get(0).getName()));
+                    manhua.setSeewhere(UrlUtils.getName(bean.getName()));
+                    manhua.setSeewhereurl(UrlUtils.getComicUrl(bean.getUrl()));
+                    ManHuaDaoUtils.insertManhua(manhua);
+                }else {
+                    manhua.setUpdatahere(UrlUtils.getName(chapterList.get(0).getName()));
+                    manhua.setSeewhere(UrlUtils.getName(bean.getName()));
+                    manhua.setSeewhereurl(UrlUtils.getComicUrl(bean.getUrl()));
                 }
-                startActivity(i);
+                ReadActivity.toactivity(InfoActivity.this,manhua);
             }
         });
 
@@ -140,32 +136,34 @@ public class InfoActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-
-
-        url = getIntent().getStringExtra("url");
-        setToptext("详情");
-        title = getIntent().getStringExtra("title");
+        setToptext("漫画详情");
+        manhua=(ManHua) getIntent().getSerializableExtra("data");
+        if (manhua!=null){//从历史列表进来的
+            url = manhua.getInfourl();
+        }else {//从其他地方进来的
+            url = getIntent().getStringExtra("url");
+            title = getIntent().getStringExtra("title");
+            //查询数据库
+            queryData(title);
+        }
         httpManager = new HttpManager(this, this);
         HttpApiManager.getInfo(httpManager, url);
-    }
-    private void setdata(String title){
-        ManHua data=ManHuaDaoUtils.queryManhua(title);
-        if (data!=null){
-            manhua=data;
-            if (adapter.getData().size()>0){
-                if (adapter.getDefSelect().equals(manhua.getNowstr())){//如果现在选中的和查询到的数据库的一样，那就不管了
-                    return;
-                }
-                for (int i = 0; i < chapterList.size(); i++) {
-                    if (chapterList.get(i).getName().equals(manhua.getNowstr())){
-                        adapter.setDefSelect(i);
-                        return;
-                    }
-                }
 
-            }
-        }else {
-//            System.out.println("ccccccccccc");
+    }
+
+    private void queryData(String title) {
+        if (title==null||title.equals("")){
+            System.out.println("错误");
+            return;
+        }
+        manhua=ManHuaDaoUtils.queryManhua(title);
+        if (manhua==null){
+            System.out.println("查询为空");
+            return;
+        }
+        System.out.println(manhua.toString());
+        if (chapterList.size()>0){//加载完列表
+            adapter.setDefSelectNotify(manhua.getSeewhere());
         }
 
     }
@@ -180,31 +178,15 @@ public class InfoActivity extends BaseActivity {
                 adapter.setNewData(chapterList);
                 bottomadapter.setNewData(otherMoreList);
                 loadLayout.setVisibility(View.GONE);
-                setdata(title);
             }
         }, 1000);
 
     }
 
     @Override
-    protected void onRestart() {
-        super.onStart();
-        setdata(title);//每次回来的时候，更新下目录选择的位置
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (manhua!=null){//关闭的时候如果有目录有更新，那就更新下数据库
-            if (chapterList.size()>0){
-                if (!manhua.getNewstr().equals(chapterList.get(0).getName())){
-                    manhua.setNewstr(chapterList.get(0).getName());
-                    ManHuaDaoUtils.updateManhua(manhua);
-                }
-            }
-
-        }
-
-        super.onDestroy();
+    public void getSeewhere(String str) {//回调获取看到哪一话
+        System.out.println("回调回来");
+        adapter.setDefSelectNotify(str);
     }
 
     @Override
@@ -216,8 +198,9 @@ public class InfoActivity extends BaseActivity {
         try {
             //从一个URL加载一个Document对象。
             Document doc = Jsoup.parse(resulte);
-            System.out.println("ttttt"+doc.select("div.topToolBar").select("a.left"));
-            ImageLoaderUtil.loader(this, doc.select("div.comicInfo").select("div.img").select("img").attr("src"), infoImg);
+//            System.out.println("ttttt"+doc.select("div.topToolBar").select("a.left"));
+            img=doc.select("div.comicInfo").select("div.img").select("img").attr("src");
+            ImageLoaderUtil.loader(this,img , infoImg);
 
 //            System.out.println("ttttt"+doc.select("div.comicInfo").select("div.img").select("img").attr("title"));
             infoTitle.setText(doc.select("div.comicInfo").select("div.img").select("img").attr("title"));
@@ -246,6 +229,10 @@ public class InfoActivity extends BaseActivity {
             for (Element e : doc.select("div.chapterList").select("div.list").select("a")) {
                 data.add(new ChapterBean(e.text(), e.attr("href")));
             }
+            if (manhua!=null){
+                adapter.setDefSelect(manhua.getSeewhere());  //设置看到哪集
+            }
+
             for (Element e : doc.select("div.otherMore").select("div.item")) {
 
 //                System.out.println("--=="+e.select("a").attr("href"));
@@ -262,31 +249,27 @@ public class InfoActivity extends BaseActivity {
     }
 
     public class SubareaAdapter extends BaseQuickAdapter<ChapterBean, BaseViewHolder> {
-        private int defItem = -1;
+        private String defItem = "";
 
 
         public SubareaAdapter(@LayoutRes int layoutResId, @Nullable List<ChapterBean> data) {
             super(layoutResId, data);
         }
-
-        public void setDefSelect(int position) {
-            this.defItem = position;
-            notifyDataSetChanged();
+        public void setDefSelect(String name) {
+            this.defItem = name;
         }
-        public String getDefSelect() {
-            String name = null;
-            if (defItem>=0){
-                name= getItem(defItem).getName();
-            }
-           return name;
+
+        public void setDefSelectNotify(String name) {
+            this.defItem = name;
+            notifyDataSetChanged();
         }
 
 
         @Override
         protected void convert(BaseViewHolder helper, ChapterBean item) {
             CardView card = helper.getView(R.id.card_view);
-            if (defItem != -1) {
-                if (defItem == helper.getPosition()) {
+            if (!defItem.equals("")) {
+                if (defItem.equals(item.getName())) {
                     card.setCardBackgroundColor(getResources().getColor(R.color.app_color));
                 } else {
                     card.setCardBackgroundColor(getResources().getColor(R.color.colorWhite));

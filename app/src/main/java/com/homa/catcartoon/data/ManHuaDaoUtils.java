@@ -53,4 +53,12 @@ public class ManHuaDaoUtils {
     public static List<ManHua> queryAll() {
         return  MyApplication.getInstance().getDaoSession().getManHuaDao().loadAll();
     }
+    /**
+     * 查询所有的数据
+     *
+     * @return
+     */
+    public static List<ManHua> queryPage(int page,int now) {
+        return  MyApplication.getInstance().getDaoSession().getManHuaDao().queryBuilder().orderDesc(ManHuaDao.Properties.Modifytime).limit(page).offset(page*now).list();
+    }
 }
