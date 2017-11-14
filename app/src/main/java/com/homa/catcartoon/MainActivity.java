@@ -116,13 +116,6 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
         {
             img.setImageResource(R.drawable.ic_switch_night);
         }
-
-
-//        if (boolValue) {
-//            SkinCompatManager.getInstance().loadSkin("night.skin", null, SkinCompatManager.SKIN_LOADER_STRATEGY_ASSETS);
-//        } else {
-//            SkinCompatManager.getInstance().restoreDefaultTheme();
-//        }
     }
 
     @Override
