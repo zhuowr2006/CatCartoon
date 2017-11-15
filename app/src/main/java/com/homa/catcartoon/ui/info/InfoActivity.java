@@ -171,10 +171,10 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
 
     @Override
     public void onNext(final String resulte, String method) {
-        getData(resulte, chapterList, otherMoreList);
         infoJishuRcview.postDelayed(new Runnable() {
             @Override
             public void run() {
+                getData(resulte, chapterList, otherMoreList);
                 adapter.setNewData(chapterList);
                 bottomadapter.setNewData(otherMoreList);
                 loadLayout.setVisibility(View.GONE);

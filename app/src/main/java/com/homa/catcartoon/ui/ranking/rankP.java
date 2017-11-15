@@ -16,6 +16,14 @@ import org.jsoup.nodes.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by Homa on 2017/11/6.
  */
@@ -43,9 +51,21 @@ public class rankP extends PxListener implements PMlistener {
 
 
     @Override
-    public void onNext(String resulte, String mothead) {
-        getData(resulte);
-        vlistener.onNext(mothead);
+    public void onNext(final String resulte, final String mothead) {
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                getData(resulte);
+                e.onNext(mothead);
+                e.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(@NonNull String str) throws Exception {
+                vlistener.onNext(mothead);
+            }
+        });
     }
 
     @Override

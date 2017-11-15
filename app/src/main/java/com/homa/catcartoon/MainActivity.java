@@ -149,7 +149,7 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
         adapter.addFragment(new HistoryFragment(), strs[3]);
 
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(2);//预加载当前可见fragment页面的左右两边，2个页面
+        viewPager.setOffscreenPageLimit(3);//预加载当前可见fragment页面的左右两边，2个页面
 
     }
 

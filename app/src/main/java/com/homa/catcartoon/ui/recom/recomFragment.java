@@ -95,6 +95,7 @@ public class recomFragment extends BaseFragment implements Vlistener ,SwipeRefre
     public void onNext(String name) {
         swipeLayout.setRefreshing(false);
         if (swipeLayout.isRefreshing()&&!isFrist){
+            System.out.println(p.getData().size()+"");
             adapter.setNewData(p.getData());
             //设置图片集合
             banner.setImages(p.getBanners());
@@ -102,7 +103,7 @@ public class recomFragment extends BaseFragment implements Vlistener ,SwipeRefre
             banner.start();
             return;
         }
-        adapter.openLoadAnimation();
+        adapter.setNewData(p.getData());
         fanjuRcview.setAdapter(adapter);
         //设置图片集合
         banner.setImages(p.getUrl());
