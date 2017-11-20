@@ -24,6 +24,7 @@ import com.litesuits.common.assist.Check;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -246,38 +247,22 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onDestroy() {
-        try {
-            ((SeeListener) fromcactivity).getSeewhere(SeewhereTitle);//强制转换
-        } catch (Exception e) {
-        }
+        EventBus.getDefault().post(SeewhereTitle);
         //保存数据
         manHua.setSeewhere(SeewhereTitle);
         manHua.setSeewhereurl(nowUrl);
         manHua.setModifytime(System.currentTimeMillis());
         ManHuaDaoUtils.updateManhua(manHua);
-        System.out.println("最后保存数据=="+manHua.toString());
+//        System.out.println("最后保存数据=="+manHua.toString());
         super.onDestroy();
     }
 
-    public static Activity fromcactivity;
 
     public static void toactivity(Activity activity,ManHua manHua) {
-        fromcactivity = activity;//存储第一个activity的对象
-        if (fromcactivity instanceof SeeListener) {//判断是不是继承了接口
             Intent intent = new Intent(activity, ReadActivity.class);
             intent.putExtra("data",manHua);
             activity.startActivity(intent);
-        } else {
-//            Intent intent = new Intent(activity, MainActivity.class);//没有继承接口的使用result方法
-//            activity.startActivityForResult(intent, MainActivity.NFC_FLAG);
-        }
     }
 
-    public SeeListener seeListener=null;
-
-    public interface SeeListener {
-
-        void getSeewhere(String str);
-    };
 
 }

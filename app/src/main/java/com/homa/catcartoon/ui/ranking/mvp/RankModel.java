@@ -1,13 +1,14 @@
-package com.homa.catcartoon.ui.ranking;
+package com.homa.catcartoon.ui.ranking.mvp;
 
-import com.homa.catcartoon.ui.base.PMlistener;
-import com.homa.catcartoon.ui.base.PxListener;
-import com.homa.catcartoon.ui.base.Vlistener;
+import android.support.annotation.NonNull;
+
+import com.homa.catcartoon.net.HttpApiManager;
 import com.homa.catcartoon.ui.ranking.bean.RankingBean;
-import com.homa.catcartoon.ui.recom.recomM;
 import com.litesuits.android.log.Log;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,57 +21,49 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Homa on 2017/11/6.
+ * Created by Homa on 2017/11/17.
  */
 
-public class rankP extends PxListener implements PMlistener {
-
-    private Vlistener vlistener;
-    private recomM mlistener;
+public class RankModel implements RankDataSource {
 
     private List<RankingBean> data;
 
-
-    public rankP(Vlistener viewListener) {
-        this.vlistener = viewListener;
-        mlistener=new recomM(this);
-        data=new ArrayList<>();
+    {
+        this.data=new ArrayList<>();
     }
 
-
     @Override
-    public void startPostForFragment(RxFragment rxFragment) {
-        mlistener.startPostForFragment(rxFragment);
-    }
-
-
-
-    @Override
-    public void onNext(final String resulte, final String mothead) {
-        Observable.create(new ObservableOnSubscribe<String>() {
+    public void GetDatas(RxFragment rxFragment, @NonNull final GetDataCallback callback) {
+        HttpManager httpManager=new HttpManager(new HttpOnNextListener() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
-                getData(resulte);
-                e.onNext(mothead);
-                e.onComplete();
+            public void onNext(final String resulte, final String method) {
+                Observable.create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(@io.reactivex.annotations.NonNull ObservableEmitter<String> e) throws Exception {
+                        getData(resulte);
+                        e.onNext(method);
+                        e.onComplete();
+                    }
+                }).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(@io.reactivex.annotations.NonNull String str) throws Exception {
+                        callback.onGetData(data);
+                    }
+                });
             }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
-            @Override
-            public void accept(@NonNull String str) throws Exception {
-                vlistener.onNext(mothead);
-            }
-        });
-    }
 
-    @Override
-    public void onError(ApiException e) {
-        vlistener.onError(e);
+            @Override
+            public void onError(ApiException e, String method) {
+                callback.onDataErro(e,method);
+            }
+        }, rxFragment);
+
+        HttpApiManager.getRecommend(httpManager);
     }
 
     private void getData(String html){
@@ -95,15 +88,5 @@ public class rankP extends PxListener implements PMlistener {
             Log.i("mytag", e.toString());
         }
 
-    }
-
-
-
-    public List<RankingBean> getData() {
-        return data;
-    }
-
-    public void cleran(){
-        data.clear();
     }
 }

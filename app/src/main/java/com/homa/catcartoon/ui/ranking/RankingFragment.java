@@ -14,9 +14,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseFragment;
-import com.homa.catcartoon.ui.base.Vlistener;
 import com.homa.catcartoon.ui.info.InfoActivity;
 import com.homa.catcartoon.ui.ranking.bean.RankingBean;
+import com.homa.catcartoon.ui.ranking.mvp.RankContract;
+import com.homa.catcartoon.ui.ranking.mvp.RankPresenter;
 import com.homa.catcartoon.utils.UrlUtils;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 
@@ -29,7 +30,7 @@ import butterknife.BindView;
  * Created by Homa on 2017/9/11.
  */
 
-public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefreshLayout.OnRefreshListener,BaseQuickAdapter.RequestLoadMoreListener{
+public class RankingFragment extends BaseFragment implements RankContract.View, SwipeRefreshLayout.OnRefreshListener, BaseQuickAdapter.RequestLoadMoreListener {
 
     private static final String TAG = "RankingFragment";
 
@@ -41,7 +42,8 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
 
     private BaseQuickAdapter adapter;
     private List<RankingBean> list;
-    private rankP p;
+    //    private rankP p;
+    private RankPresenter presenter;
 
     @Override
     public int getLayoutResId() {
@@ -50,11 +52,10 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
 
     @Override
     public void onInit() {
-        p=new rankP(this);
-        list=new ArrayList<>();
+        list = new ArrayList<>();
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(mActivity.getResources().getColor(R.color.app_color));
-        LinearLayoutManager layoutManager=new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         fanjuRcview.setLayoutManager(layoutManager);
         adapter = new SubareaAdapter(R.layout.item_home_ranking, list);
         adapter.openLoadAnimation();
@@ -67,7 +68,7 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                RankingBean bean=list.get(position);
+                RankingBean bean = list.get(position);
 //                    System.out.println("=="+UrlUtils.getComicUrl(bean.getUrl()));
                 Intent i = new Intent(getActivity(), InfoActivity.class);
                 i.putExtra("url", UrlUtils.getComicUrl(bean.getUrl()));
@@ -75,34 +76,41 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
                 startActivity(i);
             }
         });
-        p.startPostForFragment(this);
+//        p.startPostForFragment(this);
+        presenter.start();
+    }
+
+    @Override
+    public void getData(List<RankingBean> data) {
+        swipeLayout.setRefreshing(false);
+        mCurrentCounter = 0;
+        list.clear();
+        for (int i = 0; i < 20; i++) {
+            list.add(data.get(i));
+        }
+        adapter.setNewData(list);
+        mCurrentCounter = adapter.getData().size();
+    }
+
+    @Override
+    public void getDataError(ApiException e, String method) {
+        swipeLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void setPresenter(RankContract.Presenter presenter) {
+        this.presenter = (RankPresenter) presenter;
     }
 
     @Override
     public void onRefresh() {
-        p.cleran();
-        p.startPostForFragment(this);
+        presenter.start();
     }
 
-    @Override
-    public void onNext(String name) {
-        swipeLayout.setRefreshing(false);
-        mCurrentCounter=0;
-        list.clear();
-        for (int i = 0; i < 20; i++) {
-            list.add(p.getData().get(i));
-        }
-        adapter.setNewData(list);
-        mCurrentCounter=adapter.getData().size();
-    }
+    private boolean isErr = false;
+    private int TOTAL_COUNTER = 99;
+    private int mCurrentCounter = 0;
 
-    @Override
-    public void onError(ApiException e) {
-
-    }
-    private boolean isErr=false;
-    private int TOTAL_COUNTER=99;
-    private int mCurrentCounter=0;
     @Override
     public void onLoadMoreRequested() {
         fanjuRcview.postDelayed(new Runnable() {
@@ -114,9 +122,9 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
                 } else {
                     if (!isErr) {
                         //成功获取更多数据
-                        List<RankingBean> add=new ArrayList<>();
-                        for (int i = mCurrentCounter; i < mCurrentCounter+20; i++) {
-                            add.add(p.getData().get(i));
+                        List<RankingBean> add = new ArrayList<>();
+                        for (int i = mCurrentCounter; i < mCurrentCounter + 20; i++) {
+                            add.add(presenter.getData().get(i));
                         }
                         adapter.addData(add);
                         mCurrentCounter = adapter.getData().size();
@@ -134,7 +142,6 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
         }, 1000);
     }
 
-
     public class SubareaAdapter extends BaseQuickAdapter<RankingBean, BaseViewHolder> {
 
 
@@ -146,10 +153,10 @@ public class RankingFragment extends BaseFragment implements Vlistener,SwipeRefr
         protected void convert(BaseViewHolder helper, RankingBean item) {
             helper.setText(R.id.item_rk_title, item.getTitle());
             helper.setText(R.id.item_rk_num, item.getNum());
-            ImageView img=helper.getView(R.id.item_rk_hot);
-            if (helper.getLayoutPosition()<10){
+            ImageView img = helper.getView(R.id.item_rk_hot);
+            if (helper.getLayoutPosition() < 10) {
                 img.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 img.setVisibility(View.GONE);
             }
         }

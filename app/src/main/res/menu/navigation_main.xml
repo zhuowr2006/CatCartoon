@@ -8,15 +8,15 @@
             android:icon="@drawable/souye"
             android:title="首页"/>
 
-        <item
+   <!--     <item
             android:id="@+id/item_download"
             android:checkable="false"
             android:icon="@drawable/xiazai_s"
-            android:title="离线缓存"/>
+            android:title="离线缓存"/>-->
 
     </group>
 
-    <group
+   <!-- <group
         android:id="@+id/group_user"
         android:checkableBehavior="single">
 
@@ -31,6 +31,6 @@
             android:title="历史记录"/>
 
     </group>
-
+-->
 
 </menu>

@@ -1,16 +1,17 @@
-package com.homa.catcartoon.ui.recom;
+package com.homa.catcartoon.ui.recom.mvp;
+
+import android.support.annotation.NonNull;
 
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.net.HttpApiManager;
-import com.homa.catcartoon.ui.base.PMlistener;
-import com.homa.catcartoon.ui.base.PxListener;
-import com.homa.catcartoon.ui.base.Vlistener;
 import com.homa.catcartoon.ui.recom.bean.Banner;
 import com.homa.catcartoon.ui.recom.bean.MySection;
 import com.homa.catcartoon.ui.recom.bean.RecomBean;
 import com.litesuits.android.log.Log;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,61 +24,53 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Homa on 2017/11/6.
+ * Created by Homa on 2017/11/17.
  */
 
-public class recomP extends PxListener implements PMlistener {
-
-    private Vlistener vlistener;
-    private recomM mlistener;
+public class RecomModel implements RecomDataSource {
 
     private List<Banner> banners;
     private List<String> url;
     private List<MySection> data;
 
-
-    public recomP(Vlistener viewListener) {
-        this.vlistener = viewListener;
-        mlistener = new recomM(this);
-        banners = new ArrayList<>();
-        data = new ArrayList<>();
-        url = new ArrayList<>();
+    {
+        this.banners=new ArrayList<>();
+        this.url=new ArrayList<>();
+        this.data=new ArrayList<>();
     }
 
-
     @Override
-    public void startPostForFragment(RxFragment rxFragment) {
-        mlistener.startPostForFragment(rxFragment);
-    }
-
-
-    @Override
-    public void onNext(final String resulte, final String mothead) {
-        Observable.create(new ObservableOnSubscribe<String>() {
+    public void GetDatas(RxFragment rxFragment, @NonNull final GetDataCallback callback) {
+        HttpManager httpManager=new HttpManager(new HttpOnNextListener() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
-                getData(resulte);
-                e.onNext(mothead);
-                e.onComplete();
+            public void onNext(final String resulte, final String method) {
+                Observable.create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(@io.reactivex.annotations.NonNull ObservableEmitter<String> e) throws Exception {
+                        getData(resulte);
+                        e.onNext(method);
+                        e.onComplete();
+                    }
+                }).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(@io.reactivex.annotations.NonNull String str) throws Exception {
+                        callback.onGetData(banners,url,data);
+                    }
+                });
             }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+
             @Override
-            public void accept(@NonNull String str) throws Exception {
-                vlistener.onNext(mothead);
+            public void onError(ApiException e, String method) {
+                callback.onDataErro(e,method);
             }
-        });
+        }, rxFragment);
 
-    }
-
-    @Override
-    public void onError(ApiException e) {
-        vlistener.onError(e);
+        HttpApiManager.getRecommend(httpManager);
     }
 
     private void getData(final String html) {
@@ -142,23 +135,5 @@ public class recomP extends PxListener implements PMlistener {
 
         }
         return bean;
-    }
-
-    public List<MySection> getData() {
-        return data;
-    }
-
-    public List<Banner> getBanners() {
-        return banners;
-    }
-
-    public List<String> getUrl() {
-        return url;
-    }
-
-    public void cleran() {
-        data.clear();
-        url.clear();
-        banners.clear();
     }
 }

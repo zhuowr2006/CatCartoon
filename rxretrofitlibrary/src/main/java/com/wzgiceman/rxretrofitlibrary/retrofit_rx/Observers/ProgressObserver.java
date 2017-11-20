@@ -16,8 +16,6 @@ import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.utils.AppUtil;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.utils.CookieDbUtil;
 
-import java.lang.ref.SoftReference;
-
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.observers.DefaultObserver;
@@ -33,8 +31,8 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
     /*是否弹框*/
     private boolean showPorgress = true;
     //    回调接口
-    private SoftReference<HttpOnNextListener> mObserverOnNextListener;
-    //    软引用反正内存泄露
+    private HttpOnNextListener mObserverOnNextListener;
+    //    软引用反正内存泄露,不能使用软引用，不然会出现回调消失的情况
     private Context mActivity;
     //    加载框可自己定义
     private ProgressDialog pd;
@@ -47,7 +45,7 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
      *
      * @param api
      */
-    public ProgressObserver(BaseApi api, SoftReference<HttpOnNextListener> listenerSoftReference, Context
+    public ProgressObserver(BaseApi api, HttpOnNextListener listenerSoftReference, Context
             mActivity) {
         this.api = api;
         this.mObserverOnNextListener = listenerSoftReference;
@@ -112,7 +110,7 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
     public void onStart() {
         if (!AppUtil.isNetworkAvailable(RxRetrofitApp.getApplication())){ /*没连网*/
             ApiException exception=new ApiException(new NetworkErrorException(),CodeException.NETWORD_ERROR,"网络连接错误");
-            HttpOnNextListener httpOnNextListener = mObserverOnNextListener.get();
+            HttpOnNextListener httpOnNextListener = mObserverOnNextListener;
             if (httpOnNextListener == null) return;
             httpOnNextListener.onError((ApiException) exception, api.getMethod());
             return;
@@ -125,8 +123,8 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
             if (cookieResulte != null) {
                 long time = (System.currentTimeMillis() - cookieResulte.getTime()) / 1000;
                 if (time < api.getCookieNetWorkTime()) {
-                    if (mObserverOnNextListener.get() != null) {
-                        mObserverOnNextListener.get().onNext(cookieResulte.getResulte(), api.getMethod());
+                    if (mObserverOnNextListener!= null) {
+                        mObserverOnNextListener.onNext(cookieResulte.getResulte(), api.getMethod());
                     }
                     onComplete();
                     dispose();
@@ -174,8 +172,8 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
                 }
                 long time = (System.currentTimeMillis() - cookieResulte.getTime()) / 1000;
                 if (time < api.getCookieNoNetWorkTime()) {
-                    if (mObserverOnNextListener.get() != null) {
-                        mObserverOnNextListener.get().onNext(cookieResulte.getResulte(), api.getMethod());
+                    if (mObserverOnNextListener != null) {
+                        mObserverOnNextListener.onNext(cookieResulte.getResulte(), api.getMethod());
                     }
                 } else {
                     CookieDbUtil.getInstance().deleteCookie(cookieResulte);
@@ -204,7 +202,7 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
     private void errorDo(Throwable e) {
         Context context = mActivity;
         if (context == null) return;
-        HttpOnNextListener httpOnNextListener = mObserverOnNextListener.get();
+        HttpOnNextListener httpOnNextListener = mObserverOnNextListener;
         if (httpOnNextListener == null) return;
         if (e instanceof ApiException) {
             httpOnNextListener.onError((ApiException) e, api.getMethod());
@@ -238,8 +236,8 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
                 CookieDbUtil.getInstance().updateCookie(resulte);
             }
         }
-        if (mObserverOnNextListener.get() != null) {
-            mObserverOnNextListener.get().onNext((String) t, api.getMethod());
+        if (mObserverOnNextListener != null) {
+            mObserverOnNextListener.onNext((String) t, api.getMethod());
         }
     }
 

@@ -20,7 +20,6 @@ public class CacheInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-
         if (!AppUtil.isNetworkAvailable(RxRetrofitApp.getApplication())) {//没网强制从缓存读取(必须得写，不然断网状态下，退出应用，或者等待一分钟后，就获取不到缓存）
             request = request.newBuilder()
                     .cacheControl(CacheControl.FORCE_CACHE)

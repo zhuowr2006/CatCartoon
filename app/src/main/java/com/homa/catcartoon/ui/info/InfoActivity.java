@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseActivity;
 import com.homa.catcartoon.data.ManHua;
@@ -29,6 +30,9 @@ import com.litesuits.android.log.Log;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,7 +46,7 @@ import butterknife.BindView;
  * Created by Homa on 2017/11/7.
  */
 
-public class InfoActivity extends BaseActivity implements ReadActivity.SeeListener{
+public class InfoActivity extends BaseActivity  {
 
 
     @BindView(R.id.info_img)
@@ -76,6 +80,11 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
     private HttpManager httpManager;
 
     private ManHua manhua;//从数据库拿到的数据
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     public int getLayoutResId() {
@@ -84,6 +93,8 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
 
     @Override
     public void onInit() {
+        EventBus.getDefault().register(this);
+
         chapterList = new ArrayList<>();
         otherMoreList = new ArrayList<>();
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
@@ -96,12 +107,11 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapterx, View view, int position) {
-                System.out.println("tttttttttt");
                 ChapterBean bean = chapterList.get(position);
                 adapter.setDefSelectNotify(bean.getName());
                 //如果数据库里面查出来为空，代表没看过，直接创建新的数据
-                if (manhua==null){
-                    manhua=new ManHua();
+                if (manhua == null) {
+                    manhua = new ManHua();
                     manhua.setImgurl(img);
                     manhua.setTitle(title);
                     manhua.setAuthor(infoZuoze.getText().toString());
@@ -110,12 +120,12 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
                     manhua.setSeewhere(UrlUtils.getName(bean.getName()));
                     manhua.setSeewhereurl(UrlUtils.getComicUrl(bean.getUrl()));
                     ManHuaDaoUtils.insertManhua(manhua);
-                }else {
+                } else {
                     manhua.setUpdatahere(UrlUtils.getName(chapterList.get(0).getName()));
                     manhua.setSeewhere(UrlUtils.getName(bean.getName()));
                     manhua.setSeewhereurl(UrlUtils.getComicUrl(bean.getUrl()));
                 }
-                ReadActivity.toactivity(InfoActivity.this,manhua);
+                ReadActivity.toactivity(InfoActivity.this, manhua);
             }
         });
 
@@ -137,10 +147,10 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
             }
         });
         setToptext("漫画详情");
-        manhua=(ManHua) getIntent().getSerializableExtra("data");
-        if (manhua!=null){//从历史列表进来的
+        manhua = (ManHua) getIntent().getSerializableExtra("data");
+        if (manhua != null) {//从历史列表进来的
             url = manhua.getInfourl();
-        }else {//从其他地方进来的
+        } else {//从其他地方进来的
             url = getIntent().getStringExtra("url");
             title = getIntent().getStringExtra("title");
             //查询数据库
@@ -152,17 +162,17 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
     }
 
     private void queryData(String title) {
-        if (title==null||title.equals("")){
+        if (title == null || title.equals("")) {
             System.out.println("错误");
             return;
         }
-        manhua=ManHuaDaoUtils.queryManhua(title);
-        if (manhua==null){
+        manhua = ManHuaDaoUtils.queryManhua(title);
+        if (manhua == null) {
             System.out.println("查询为空");
             return;
         }
         System.out.println(manhua.toString());
-        if (chapterList.size()>0){//加载完列表
+        if (chapterList.size() > 0) {//加载完列表
             adapter.setDefSelectNotify(manhua.getSeewhere());
         }
 
@@ -180,13 +190,12 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
                 loadLayout.setVisibility(View.GONE);
             }
         }, 1000);
-
     }
 
-    @Override
-    public void getSeewhere(String str) {//回调获取看到哪一话
-        System.out.println("回调回来");
-        adapter.setDefSelectNotify(str);
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getSeewhere(String message) {
+        adapter.setDefSelectNotify(message);
     }
 
     @Override
@@ -199,8 +208,8 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
             //从一个URL加载一个Document对象。
             Document doc = Jsoup.parse(resulte);
 //            System.out.println("ttttt"+doc.select("div.topToolBar").select("a.left"));
-            img=doc.select("div.comicInfo").select("div.img").select("img").attr("src");
-            ImageLoaderUtil.loader(this,img , infoImg);
+            img = doc.select("div.comicInfo").select("div.img").select("img").attr("src");
+            ImageLoaderUtil.loader(this, img, infoImg);
 
 //            System.out.println("ttttt"+doc.select("div.comicInfo").select("div.img").select("img").attr("title"));
             infoTitle.setText(doc.select("div.comicInfo").select("div.img").select("img").attr("title"));
@@ -229,7 +238,7 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
             for (Element e : doc.select("div.chapterList").select("div.list").select("a")) {
                 data.add(new ChapterBean(e.text(), e.attr("href")));
             }
-            if (manhua!=null){
+            if (manhua != null) {
                 adapter.setDefSelect(manhua.getSeewhere());  //设置看到哪集
             }
 
@@ -248,6 +257,12 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     public class SubareaAdapter extends BaseQuickAdapter<ChapterBean, BaseViewHolder> {
         private String defItem = "";
 
@@ -255,6 +270,7 @@ public class InfoActivity extends BaseActivity implements ReadActivity.SeeListen
         public SubareaAdapter(@LayoutRes int layoutResId, @Nullable List<ChapterBean> data) {
             super(layoutResId, data);
         }
+
         public void setDefSelect(String name) {
             this.defItem = name;
         }

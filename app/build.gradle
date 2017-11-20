@@ -68,4 +68,6 @@ dependencies {
     compile'org.greenrobot:greendao-generator:3.1.0'
     //用来升级greendao数据库的辅助类
     compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.4.0'
+    //事件总线，用来回调或者传递数据
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

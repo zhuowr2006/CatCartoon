@@ -22,7 +22,11 @@ import com.homa.catcartoon.base.MyApplication;
 import com.homa.catcartoon.base.TranslucentBarBaseActivity;
 import com.homa.catcartoon.ui.History.HistoryFragment;
 import com.homa.catcartoon.ui.category.categoryFragment;
+import com.homa.catcartoon.ui.ranking.mvp.RankModel;
+import com.homa.catcartoon.ui.ranking.mvp.RankPresenter;
 import com.homa.catcartoon.ui.ranking.RankingFragment;
+import com.homa.catcartoon.ui.recom.mvp.RecomModel;
+import com.homa.catcartoon.ui.recom.mvp.RecomPresenter;
 import com.homa.catcartoon.ui.recom.recomFragment;
 import com.homa.catcartoon.ui.search.SearchActivity;
 import com.homa.catcartoon.utils.PreferenceUtil;
@@ -143,9 +147,17 @@ public class MainActivity extends TranslucentBarBaseActivity implements Navigati
 
         String[] strs = new String[]{"推荐", "分类","排行","历史"};
 
-        adapter.addFragment(new recomFragment(), strs[0]);
+        recomFragment rec=new recomFragment();
+        new RecomPresenter(new RecomModel(),rec);
+        adapter.addFragment(rec, strs[0]);
+
         adapter.addFragment(new categoryFragment(), strs[1]);
-        adapter.addFragment(new RankingFragment(), strs[2]);
+
+        RankingFragment rank=new RankingFragment();
+        new RankPresenter(new RankModel(),rank);
+        adapter.addFragment(rank, strs[2]);
+
+//        adapter.addFragment(new RankingFragment(), strs[2]);
         adapter.addFragment(new HistoryFragment(), strs[3]);
 
         viewPager.setAdapter(adapter);

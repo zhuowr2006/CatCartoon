@@ -44,4 +44,9 @@ public abstract class BaseFragment extends RxFragment implements BaseInit {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }
