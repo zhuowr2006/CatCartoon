@@ -2,7 +2,7 @@ package com.homa.catcartoon.ui.read;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -13,6 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.homa.catcartoon.R;
 import com.homa.catcartoon.base.BaseActivity;
 import com.homa.catcartoon.data.ManHua;
@@ -57,6 +60,8 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
     TextView nextChapter;
     @BindView(R.id.read_title)
     TextView readTitle;
+    @BindView(R.id.load_text)
+    TextView loadText;
 
 
     private HttpManager httpManager;
@@ -80,7 +85,7 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        isExtendToBaseLayout=false;
+        isExtendToBaseLayout = false;
         //        //去除title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //去掉Activity上面的状态栏
@@ -103,11 +108,11 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
         nextPage.setOnClickListener(this);
         nextChapter.setOnClickListener(this);
 
-        manHua=(ManHua)getIntent().getSerializableExtra("data");
-        SeewhereTitle=manHua.getSeewhere();
-        nowUrl=manHua.getSeewhereurl();
+        manHua = (ManHua) getIntent().getSerializableExtra("data");
+        SeewhereTitle = manHua.getSeewhere();
+        nowUrl = manHua.getSeewhereurl();
         httpManager = new HttpManager(this, this);
-        HttpApiManager.getInfo(httpManager,nowUrl);
+        HttpApiManager.getInfo(httpManager, nowUrl);
 //        loadLayout.setVisibility(View.VISIBLE);
 
     }
@@ -145,7 +150,7 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
 //            System.out.println(doc.select("span.center").select("em").text());
             String title = doc.select("span.center").select("em").text();
 //            System.out.println(UrlUtils.getName(title) + "=====");//拿这个去上一个界面对比
-            SeewhereTitle=UrlUtils.getName(title);
+            SeewhereTitle = UrlUtils.getName(title);
             for (Element e : doc.select("div.viewTool").select("a")) {
                 if (e.text().equals("上一章")) {
                     if (e.attr("href").contains("第一章")) {
@@ -186,22 +191,38 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
             readTitle.setText(SeewhereTitle);
-            photoView.setPhotoUri(Uri.parse(img));
+//            photoView.setPhotoUri(Uri.parse(img));
 
+//            FrescoHelper.getFrescoImg(this, img, 0, 0, new LoadFrescoListener() {
+//                @Override
+//                public void onSuccess(Bitmap bitmap) {
+//                    photoView.setImageBitmap(bitmap);
+//                }
+//
+//                @Override
+//                public void onFail() {
+//
+//                }
+//            });
 //            ImageLoaderUtil.loader(this,img,photoView);
+            loadText.setText("加载中....");
+            loadText.setVisibility(View.VISIBLE);
+            Glide.with(this) // could be an issue!
+                    .load(img)
+                    .asBitmap().listener(new RequestListener<String, Bitmap>() {
+                @Override
+                public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                    loadText.setText("加载失败");
+                    return false;
+                }
 
-//            Glide.with(this) // could be an issue!
-//                    .load(img)
-//                    .asBitmap()
-//                    .into(new SimpleTarget<Bitmap>() {
-//                        @Override
-//                        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-//                            // do something with the bitmap
-//                            // for demonstration purposes, let's just set it to an ImageView
-//                            photoView.setImageBitmap(bitmap);
-//                            loadLayout.setVisibility(View.GONE);
-//                        }
-//                    });
+                @Override
+                public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    loadText.setVisibility(View.GONE);
+                    return false;
+                }
+            })
+                    .into(photoView);
 
         } catch (Exception e) {
             Log.i("mytag", e.toString());
@@ -217,28 +238,28 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
                     Toast.makeText(this, "已经是第一章了", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                nowUrl=UrlUtils.getComicUrl(upChapterStr);
+                nowUrl = UrlUtils.getComicUrl(upChapterStr);
                 break;
             case R.id.up_page:
                 if (upPageStr.equals("")) {
                     Toast.makeText(this, "已经是第一页了", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                nowUrl=UrlUtils.getComicUrl(upPageStr);
+                nowUrl = UrlUtils.getComicUrl(upPageStr);
                 break;
             case R.id.next_page:
                 if (nextPageStr.equals("")) {
                     Toast.makeText(this, "已经是最后一页了", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                nowUrl=UrlUtils.getComicUrl(nextPageStr);
+                nowUrl = UrlUtils.getComicUrl(nextPageStr);
                 break;
             case R.id.next_chapter:
                 if (nextChapterStr.equals("")) {
                     Toast.makeText(this, "已经是最后一章了", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                nowUrl=UrlUtils.getComicUrl(nextChapterStr);
+                nowUrl = UrlUtils.getComicUrl(nextChapterStr);
                 break;
 
         }
@@ -258,10 +279,10 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    public static void toactivity(Activity activity,ManHua manHua) {
-            Intent intent = new Intent(activity, ReadActivity.class);
-            intent.putExtra("data",manHua);
-            activity.startActivity(intent);
+    public static void toactivity(Activity activity, ManHua manHua) {
+        Intent intent = new Intent(activity, ReadActivity.class);
+        intent.putExtra("data", manHua);
+        activity.startActivity(intent);
     }
 
 

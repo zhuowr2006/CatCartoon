@@ -140,5 +140,13 @@
             android:textSize="14sp" />
 
     </RelativeLayout>
+    <TextView
+        android:id="@+id/load_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:text="加载中...."/>
 </RelativeLayout>
 
