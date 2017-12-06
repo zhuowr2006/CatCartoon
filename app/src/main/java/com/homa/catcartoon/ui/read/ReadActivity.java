@@ -111,8 +111,8 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
         manHua = (ManHua) getIntent().getSerializableExtra("data");
         SeewhereTitle = manHua.getSeewhere();
         nowUrl = manHua.getSeewhereurl();
-        httpManager = new HttpManager(this, this);
-        HttpApiManager.getInfo(httpManager, nowUrl);
+//        httpManager = new HttpManager(this, this);
+        HttpApiManager.getInfo(this,nowUrl,this);
 //        loadLayout.setVisibility(View.VISIBLE);
 
     }
@@ -221,8 +221,7 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
                     loadText.setVisibility(View.GONE);
                     return false;
                 }
-            })
-                    .into(photoView);
+            }).into(photoView);
 
         } catch (Exception e) {
             Log.i("mytag", e.toString());
@@ -263,7 +262,8 @@ public class ReadActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
         }
-        HttpApiManager.getInfo(httpManager, nowUrl);
+        HttpApiManager.getInfo(this,nowUrl,this);
+//        HttpApiManager.getInfo(httpManager, nowUrl);
     }
 
     @Override

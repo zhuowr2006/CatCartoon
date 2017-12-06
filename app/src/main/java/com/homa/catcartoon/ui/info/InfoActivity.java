@@ -28,7 +28,6 @@ import com.homa.catcartoon.utils.ImageLoaderUtil;
 import com.homa.catcartoon.utils.UrlUtils;
 import com.litesuits.android.log.Log;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
-import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -77,7 +76,7 @@ public class InfoActivity extends BaseActivity  {
     private String title;
     private String img;
 
-    private HttpManager httpManager;
+//    private HttpManager httpManager;
 
     private ManHua manhua;//从数据库拿到的数据
     /**
@@ -156,8 +155,8 @@ public class InfoActivity extends BaseActivity  {
             //查询数据库
             queryData(title);
         }
-        httpManager = new HttpManager(this, this);
-        HttpApiManager.getInfo(httpManager, url);
+//        httpManager = new HttpManager(this, this);
+        HttpApiManager.getInfo(this,url,this);
 
     }
 

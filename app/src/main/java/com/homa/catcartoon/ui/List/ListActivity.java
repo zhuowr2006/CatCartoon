@@ -87,8 +87,8 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         String title=getIntent().getStringExtra("title");
         setToptext(title);
 
-        httpManager = new HttpManager(this, this);
-        HttpApiManager.getCategory(httpManager, type, pagenum);
+//        httpManager = new HttpManager(this, this);
+        HttpApiManager.getCategory(this, type, pagenum,this);
         swipeLayout.setRefreshing(true);
     }
 
@@ -161,13 +161,15 @@ public class ListActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             adapter.loadMoreEnd();
             return;
         }
-        HttpApiManager.getCategory(httpManager, type, pagenum);
+//        HttpApiManager.getCategory(httpManager, type, pagenum);
+        HttpApiManager.getCategory(this, type, pagenum,this);
     }
 
     @Override
     public void onRefresh() {
         pagenum = 1;
-        HttpApiManager.getCategory(httpManager, type, pagenum);
+//        HttpApiManager.getCategory(httpManager, type, pagenum);
+        HttpApiManager.getCategory(this, type, pagenum,this);
     }
 
     public class SubareaAdapter extends BaseQuickAdapter<ListBean, BaseViewHolder> {

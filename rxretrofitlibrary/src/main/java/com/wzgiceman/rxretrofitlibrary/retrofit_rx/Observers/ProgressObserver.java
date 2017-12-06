@@ -2,9 +2,6 @@ package com.wzgiceman.rxretrofitlibrary.retrofit_rx.Observers;
 
 
 import android.accounts.NetworkErrorException;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api.BaseApi;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.RxRetrofitApp;
@@ -32,10 +29,10 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
     private boolean showPorgress = true;
     //    回调接口
     private HttpOnNextListener mObserverOnNextListener;
-    //    软引用反正内存泄露,不能使用软引用，不然会出现回调消失的情况
-    private Context mActivity;
-    //    加载框可自己定义
-    private ProgressDialog pd;
+//    //    软引用反正内存泄露,不能使用软引用，不然会出现回调消失的情况
+//    private Context mActivity;
+//    //    加载框可自己定义
+//    private ProgressDialog pd;
     /*请求数据*/
     private BaseApi api;
 
@@ -45,61 +42,14 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
      *
      * @param api
      */
-    public ProgressObserver(BaseApi api, HttpOnNextListener listenerSoftReference, Context
-            mActivity) {
+    public ProgressObserver(BaseApi api, HttpOnNextListener listenerSoftReference) {
         this.api = api;
         this.mObserverOnNextListener = listenerSoftReference;
-        this.mActivity = mActivity;
-        setShowPorgress(api.isShowProgress());
-        if (api.isShowProgress()) {
-            initProgressDialog(api.isCancel());
-        }
     }
 
 
 
-    /**
-     * 初始化加载框
-     */
-    private void initProgressDialog(boolean cancel) {
-        Context context = mActivity;
-        if (pd == null && context != null) {
-            pd = new ProgressDialog(context);
-            pd.setCancelable(cancel);
-            if (cancel) {
-                pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        onCancelProgress();
-                    }
-                });
-            }
-        }
-    }
 
-
-    /**
-     * 显示加载框
-     */
-    private void showProgressDialog() {
-        if (!isShowPorgress()) return;
-        Context context = mActivity;
-        if (pd == null || context == null) return;
-        if (!pd.isShowing()) {
-            pd.show();
-        }
-    }
-
-
-    /**
-     * 隐藏
-     */
-    private void dismissProgressDialog() {
-        if (!isShowPorgress()) return;
-        if (pd != null && pd.isShowing()) {
-            pd.dismiss();
-        }
-    }
 
 
     /**
@@ -115,7 +65,6 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
             httpOnNextListener.onError((ApiException) exception, api.getMethod());
             return;
         }
-        showProgressDialog();
         /*缓存并且有网*/
         if (api.isCache() && AppUtil.isNetworkAvailable(RxRetrofitApp.getApplication())) {
              /*获取缓存数据*/
@@ -138,7 +87,6 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
      */
     @Override
     public void onComplete() {
-        dismissProgressDialog();
     }
 
     /**
@@ -155,7 +103,6 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
         } else {
             errorDo(e);
         }
-        dismissProgressDialog();
     }
 
     /**
@@ -200,8 +147,6 @@ public class ProgressObserver<T> extends ResourceObserver<T> {
      * @param e
      */
     private void errorDo(Throwable e) {
-        Context context = mActivity;
-        if (context == null) return;
         HttpOnNextListener httpOnNextListener = mObserverOnNextListener;
         if (httpOnNextListener == null) return;
         if (e instanceof ApiException) {

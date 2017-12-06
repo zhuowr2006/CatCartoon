@@ -133,14 +133,38 @@ public class recomFragment extends BaseFragment implements RecomContract.View ,S
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        banner.start();
+        System.out.println("tttttttttt");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (banner!=null){
+            banner.startAutoPlay();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (banner!=null){
+            banner.startAutoPlay();
+        }
+        System.out.println("ccccccc");
+    }
+
+    @Override
     public void getData(List<com.homa.catcartoon.ui.recom.bean.Banner> banners, List<String> url, List<MySection> data) {
         swipeLayout.setRefreshing(false);
         if (swipeLayout.isRefreshing()&&!isFrist){
             adapter.setNewData(data);
             //设置图片集合
-            banner.setImages(banners);
+            banner.update(banners);
             //banner设置方法全部调用完毕时最后调用
-            banner.start();
+            banner.startAutoPlay();
             return;
         }
         adapter.setNewData(data);

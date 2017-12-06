@@ -85,8 +85,8 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
             }
         });
         content = getIntent().getStringExtra("content");
-        httpManager = new HttpManager(this, this);
-        HttpApiManager.getSearch(httpManager, content);
+//        httpManager = new HttpManager(this, this);
+        HttpApiManager.getSearch(this, content,this);
         swipeLayout.setRefreshing(true);
     }
 
@@ -163,7 +163,7 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
     @Override
     public void onLoadMoreRequested() {
         if (!Check.isEmpty(nextPageUrl)){
-            HttpApiManager.getSearch(httpManager, nextPageUrl);
+            HttpApiManager.getSearch(this, content,this);
         }else {
             //数据全部加载完毕
             adapter.loadMoreEnd();
@@ -173,7 +173,7 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
 
     @Override
     public void onRefresh() {
-        HttpApiManager.getSearch(httpManager, "/search-" + content);
+        HttpApiManager.getSearch(this, content,this);
     }
 
     public class SubareaAdapter extends BaseQuickAdapter<ListBean, BaseViewHolder> {

@@ -51,6 +51,8 @@ public class MyApplication extends Application {
                 .build();
         Fresco.initialize(this, config);
         setDatabase();
+        //检测内存泄露
+//        BlockCanary.install(this, new AppBlockCanaryContext()).start();
     }
     public static MyApplication getInstance() {
         return mInstance;

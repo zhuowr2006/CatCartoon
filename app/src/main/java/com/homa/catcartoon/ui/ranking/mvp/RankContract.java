@@ -31,11 +31,12 @@ public interface RankContract {
 
     interface View extends BaseView<Presenter> {
 
+
         void getData(List<RankingBean> data);
         void getDataError(ApiException e, String method);
-
     }
 
     interface Presenter extends BasePresenter {
+
     }
 }

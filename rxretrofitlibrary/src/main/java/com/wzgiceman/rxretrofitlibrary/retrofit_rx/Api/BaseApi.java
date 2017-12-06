@@ -1,8 +1,6 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api;
 
 
-import io.reactivex.Observable;
-
 /**
  * 请求数据统一封装类
  * Created by WZG on 2016/7/16.
@@ -32,8 +30,6 @@ public class BaseApi {
     private long retryIncreaseDelay = 100;
     /*缓存url-可手动设置*/
     private String cacheUrl;
-
-    private Observable observable;
 
 //    /**
 //     * 设置参数
@@ -149,12 +145,4 @@ public class BaseApi {
         this.cacheUrl = cacheUrl;
     }
 
-    public Observable getObservable() {
-        return observable;
-    }
-
-    public BaseApi setObservable(Observable observable) {
-        this.observable = observable;
-        return this;
-    }
 }

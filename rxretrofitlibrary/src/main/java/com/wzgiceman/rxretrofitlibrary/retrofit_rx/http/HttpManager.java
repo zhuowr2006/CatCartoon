@@ -1,7 +1,5 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.http;
 
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.android.FragmentEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api.BaseApi;
@@ -30,33 +28,33 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class HttpManager {
     /*软引用對象*/
 //    private SoftReference<HttpOnNextListener> onNextListener;
-    private HttpOnNextListener onNextListener;
+//    private HttpOnNextListener onNextListener;
     private SoftReference<HttpOnNextObserverListener> onNextSubListener;
     private SoftReference<RxAppCompatActivity> appCompatActivity;
     private SoftReference<RxFragment> appFragment;
+    private BaseApi api;
 
-
-    public HttpManager(HttpOnNextListener onNextListener, RxAppCompatActivity appCompatActivity) {
-        this.onNextListener = onNextListener;
+    public HttpManager(RxAppCompatActivity appCompatActivity,BaseApi api) {
         this.appCompatActivity = new SoftReference(appCompatActivity);
+        this.api = api;
     }
 
-    public HttpManager(HttpOnNextListener onNextListener, RxFragment appFragment) {
-        this.onNextListener =onNextListener;
-        this.appFragment = new SoftReference(appFragment);
+    public HttpManager(RxFragment rxFragment,BaseApi api) {
+        this.appFragment = new SoftReference(rxFragment);
+        this.api = api;
     }
 
 
 
-
-    /**
-     * 处理http请求
-     *
-     * @param basePar 封装的请求数据
-     */
-    public void doHttpDeal(final BaseApi basePar) {
-        httpDeal(basePar.getObservable(), basePar);
-    }
+//
+//    /**
+//     * 处理http请求
+//     *
+//     * @param basePar 封装的请求数据
+//     */
+//    public void doHttpDeal(final BaseApi basePar,) {
+//        httpDeal(basePar.getObservable(), basePar);
+//    }
 
     /**
      * 获取Retrofit对象
@@ -64,12 +62,12 @@ public class HttpManager {
      * @param basePar
      * @return
      */
-    public Retrofit getReTrofit(final BaseApi basePar) {
+    public <T> T getReTrofit(final Class<T> s) {
         OkHttpClient client;
         if (appCompatActivity!=null){
-            client=OkHttpUtils.getClient(basePar,appCompatActivity.get());
+            client=OkHttpUtils.getClient(api,appCompatActivity.get());
         }else {
-            client=OkHttpUtils.getClient(basePar,appFragment.get().getContext());
+            client=OkHttpUtils.getClient(api,appFragment.get().getContext());
         }
 
         /*创建retrofit对象*/
@@ -77,28 +75,28 @@ public class HttpManager {
                 .client(client)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl(basePar.getBaseUrl())
+                .baseUrl(api.getBaseUrl())
                 .build();
-        return retrofit;
+        return retrofit.create(s);
     }
 
     /**
      * RxRetrofit处理
      *
      * @param observable
-     * @param basePar
+     * @param api
      */
-    public void httpDeal(Observable observable, BaseApi basePar) {
+    public void httpDeal(Observable observable,HttpOnNextListener onNextListener) {
          if (appCompatActivity!=null){
                 /*失败后的retry配置*/
-             observable = observable.retryWhen(new RetryWhenNetworkException(basePar.getRetryCount(),
-                     basePar.getRetryDelay(), basePar.getRetryIncreaseDelay()))
+             observable = observable.retryWhen(new RetryWhenNetworkException(api.getRetryCount(),
+                     api.getRetryDelay(), api.getRetryIncreaseDelay()))
                 /*异常处理*/
                      .onErrorResumeNext(new ExceptionFunc())
                 /*生命周期管理*/
                      //.compose(appCompatActivity.get().bindToLifecycle())
                      //Note:手动设置在activity onDestroy的时候取消订阅
-                     .compose(appCompatActivity.get().bindUntilEvent(ActivityEvent.DESTROY))
+                     .compose(appCompatActivity.get().bindToLifecycle())
                 /*返回数据统一判断*/
                      .map(new ResulteFunc())
                 /*http请求线程*/
@@ -108,14 +106,14 @@ public class HttpManager {
                      .observeOn(AndroidSchedulers.mainThread());
          }else {
                 /*失败后的retry配置*/
-             observable = observable.retryWhen(new RetryWhenNetworkException(basePar.getRetryCount(),
-                     basePar.getRetryDelay(), basePar.getRetryIncreaseDelay()))
+             observable = observable.retryWhen(new RetryWhenNetworkException(api.getRetryCount(),
+                     api.getRetryDelay(), api.getRetryIncreaseDelay()))
                 /*异常处理*/
                      .onErrorResumeNext(new ExceptionFunc())
                 /*生命周期管理*/
                      //.compose(appCompatActivity.get().bindToLifecycle())
                      //Note:手动设置在activity onDestroy的时候取消订阅
-                     .compose(appFragment.get().bindUntilEvent(FragmentEvent.DESTROY))
+                     .compose(appFragment.get().bindToLifecycle())
                 /*返回数据统一判断*/
                      .map(new ResulteFunc())
                 /*http请求线程*/
@@ -127,18 +125,17 @@ public class HttpManager {
 
         /*ober回调，链接式返回*/
         if (onNextSubListener != null && null != onNextSubListener.get()) {
-            onNextSubListener.get().onNext(observable, basePar.getMethod());
+            onNextSubListener.get().onNext(observable, api.getMethod());
         }
         /*数据String回调*/
         if (onNextListener != null) {
+            ProgressObserver subscriber;
             if (appCompatActivity!=null){
-                ProgressObserver subscriber = new ProgressObserver(basePar, onNextListener, appCompatActivity.get());
-                observable.subscribe(subscriber);
+                subscriber= new ProgressObserver(api, onNextListener);
             }else {
-                ProgressObserver subscriber = new ProgressObserver(basePar, onNextListener, appFragment.get().getContext());
-                observable.subscribe(subscriber);
+                subscriber = new ProgressObserver(api, onNextListener);
             }
+            observable.subscribe(subscriber);
         }
     }
-
 }

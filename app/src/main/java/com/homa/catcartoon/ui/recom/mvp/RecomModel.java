@@ -10,7 +10,6 @@ import com.homa.catcartoon.ui.recom.bean.RecomBean;
 import com.litesuits.android.log.Log;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
-import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import org.jsoup.Jsoup;
@@ -45,7 +44,8 @@ public class RecomModel implements RecomDataSource {
 
     @Override
     public void GetDatas(RxFragment rxFragment, @NonNull final GetDataCallback callback) {
-        HttpManager httpManager=new HttpManager(new HttpOnNextListener() {
+
+        HttpApiManager.getRecommend(rxFragment,new HttpOnNextListener() {
             @Override
             public void onNext(final String resulte, final String method) {
                 Observable.create(new ObservableOnSubscribe<String>() {
@@ -68,12 +68,15 @@ public class RecomModel implements RecomDataSource {
             public void onError(ApiException e, String method) {
                 callback.onDataErro(e,method);
             }
-        }, rxFragment);
-
-        HttpApiManager.getRecommend(httpManager);
+        });
     }
 
     private void getData(final String html) {
+        if (html!=null&&!html.equals("")){
+            banners.clear();
+            url.clear();
+            data.clear();
+        }
         try {
             //从一个URL加载一个Document对象。
             Document doc = Jsoup.parse(html);
@@ -114,7 +117,6 @@ public class RecomModel implements RecomDataSource {
                 num++;
 //                Log.i("最新上架",e.select("a").attr("href")+"=="+e.select("img").attr("src")+"=="+e.select("img").attr("title")+"=="+e.select("span").text());
             }
-            System.out.println("数据分析完成");
         } catch (Exception e) {
             Log.i("mytag", e.toString());
         }

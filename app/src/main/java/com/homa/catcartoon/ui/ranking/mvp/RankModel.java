@@ -7,7 +7,6 @@ import com.homa.catcartoon.ui.ranking.bean.RankingBean;
 import com.litesuits.android.log.Log;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
-import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import org.jsoup.Jsoup;
@@ -38,7 +37,8 @@ public class RankModel implements RankDataSource {
 
     @Override
     public void GetDatas(RxFragment rxFragment, @NonNull final GetDataCallback callback) {
-        HttpManager httpManager=new HttpManager(new HttpOnNextListener() {
+
+        HttpApiManager.getRecommend(rxFragment,new HttpOnNextListener() {
             @Override
             public void onNext(final String resulte, final String method) {
                 Observable.create(new ObservableOnSubscribe<String>() {
@@ -61,9 +61,7 @@ public class RankModel implements RankDataSource {
             public void onError(ApiException e, String method) {
                 callback.onDataErro(e,method);
             }
-        }, rxFragment);
-
-        HttpApiManager.getRecommend(httpManager);
+        });
     }
 
     private void getData(String html){

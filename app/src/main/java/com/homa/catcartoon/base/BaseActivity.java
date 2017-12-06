@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.homa.catcartoon.R;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
-import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import butterknife.ButterKnife;
@@ -34,7 +33,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements HttpOn
     /**
      * 公用HttpManager
      * */
-    protected HttpManager manager;
+//    protected HttpManager manager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements HttpOn
         }
         ActivityManager.getInstance().addActivity(this);//添加界面到activity管理列表
         ButterKnife.bind(this);//注释绑定控件
-        manager = new HttpManager(this, this);//初始化网络请求工具
+//        manager = new HttpManager(this, this);//初始化网络请求工具
         /**界面操作*/
         setListener();
         onInit();

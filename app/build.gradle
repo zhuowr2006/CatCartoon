@@ -71,4 +71,6 @@ dependencies {
     compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.4.0'
     //事件总线，用来回调或者传递数据
     compile 'org.greenrobot:eventbus:3.0.0'
+    //检测内存泄露
+    compile 'com.github.markzhai:blockcanary-android:1.5.0'
 }
